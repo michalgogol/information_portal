@@ -52,6 +52,8 @@ public class AdminPanelController {
 
         Elements elements = document.select(art_href);
         String[] separatedSelectors = art_cont.split(Pattern.quote("&&")); //allows to use many selectors refers to the same content
+        String[] imgSeparatedSelectors =img_href.split(Pattern.quote("&&"));
+
         testers = new ArrayList<SiteContent>();
 
         int iterator = 0;
@@ -76,18 +78,19 @@ public class AdminPanelController {
 
                 document = Jsoup.connect(testers.get(i).getArticle_href()).get();
 
-            } catch (IllegalArgumentException ex) {return new ModelAndView().addObject("testResults", testers);}
+            } catch (IllegalArgumentException ex) {
+                return new ModelAndView().addObject("testResults", testers);
+            }
 
 
-            if(document.select(title).text().length()>0) {
+            if (document.select(title).text().length() > 0) {
 
-                String[] temp =(document.select(title).text().split(Pattern.quote("-")));
+                String[] temp = (document.select(title).text().split(Pattern.quote("-")));
                 testers.get(i).setTitle(temp[0]);
 
             }
 
-            for(String selector : separatedSelectors)
-            {
+            for (String selector : separatedSelectors) {
 
                 if (document.select(selector).text().length() > 0)
                     testers.get(i).setArticle_content(document.select(selector).text().substring(0, 15) + "...");
@@ -96,15 +99,17 @@ public class AdminPanelController {
 
             }
 
-            if(document.select(art_head).text().length()>0)
-                    testers.get(i).setArticle_header(document.select(art_head).text().substring(0, 10) + "...");
+            if (document.select(art_head).text().length() > 0)
+                testers.get(i).setArticle_header(document.select(art_head).text().substring(0, 10) + "...");
 
-
-            if(document.select(img_href).attr("src").length()>0)
-                   testers.get(i).setImg_Href(document.select(img_href).attr("src").substring(0, 10) + "...");
-
+            for (String selector: imgSeparatedSelectors) {
+                System.out.println(selector);
+                if (document.select(selector).attr("src").length() > 0)
+                    testers.get(i).setImg_Href(document.select(selector).attr("abs:src"));
+                else
+                    continue;
             }
-
+        }
         if(request.getParameter("Save")!=null)
             {
                 new CategorySelectors().addNewsSelectors(category,domain,title,art_href,art_cont,art_head,img_href);

@@ -1,5 +1,6 @@
 package com.infosite.db;
 
+import com.google.common.io.BaseEncoding;
 import com.infosite.domain.UserID;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,23 +13,26 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.sql.*;
+import java.sql.PreparedStatement;
+import java.util.UUID;
 
 @Controller
 public class userDB {
 
     private Connection conn;
     private PreparedStatement query;
+    private Statement state;
+    private String uuid;
 
 
     @ResponseBody
-    @RequestMapping(value = "/userDAO", method = RequestMethod.POST)
-    public ModelAndView temp(@ModelAttribute UserID user, RedirectAttributes redirectLogin, HttpServletResponse response) {
+    @RequestMapping(value = "/userDB", method = RequestMethod.POST)
+    public ModelAndView temp(@ModelAttribute UserID user, HttpServletResponse response) {
 
         if(checkPassword(user.getLogin(),user.getPassword())==true)
         {
-            redirectLogin.addFlashAttribute("login",user.getLogin());
-
-       //     response.addCookie(new Cookie("login",user.getLogin()));
+            setUuid(user.getLogin());
+            response.addCookie(new Cookie("userid",uuid));
             return new ModelAndView("redirect:/Account");
 
         }
@@ -38,14 +42,14 @@ public class userDB {
     }
     public Boolean checkPassword(String login,String pass) //jeśli zwraca pusty string to znaczy, że nie ma konta o takim loginie
     {
-        String passy="";
+        String cryptedPassword="";
         conn = ConnectorDB.setConnect();
         if(pass == "")
             return false;
 
         try{
 
-            Statement state = conn.createStatement();
+            state = conn.createStatement();
             state.execute("USE infoPortal");
 
             query = conn.prepareStatement("SELECT Password FROM users WHERE login= ? ");
@@ -54,10 +58,12 @@ public class userDB {
 
             while(res.next())
             {
-                passy=res.getString(1);
+                cryptedPassword=res.getString(1);
             }
+            byte[] encodedPasswordInBytes = BaseEncoding.base32().decode(cryptedPassword);
+            String encodedPassword = new String(encodedPasswordInBytes);
 
-            if(passy.equals(pass)==true)
+            if(encodedPassword.equals(pass)==true)
                 return true;
             else
                 return false;
@@ -66,6 +72,20 @@ public class userDB {
 
         return false;
     }
+    public void setUuid(String login)
+    {
+
+        try {
+            uuid= UUID.randomUUID().toString();
+            query = conn.prepareStatement("UPDATE users SET uuid = ? WHERE Login = ?");
+            query.setString(1, uuid);
+            query.setString(2,login);
+            query.executeUpdate();
+        }catch (SQLException ex){ex.printStackTrace();}
+
+    }
+
+
 
 
 }

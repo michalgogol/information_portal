@@ -1,6 +1,7 @@
 package com.infosite.crawlers;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -17,7 +18,7 @@ public class WebCrawler {
 
     private Document document;
     private List<SiteContent> contentOfArticle;
-    private String[] linkers,contentSelectors,headAndImgSelectors;
+    private String[] linkers,contentSelectors,headAndImgSelectors,imgSelectors;
     private List<Selector> selectors;
     private List<Integer> absentArticles;
     private int sizeOfArticlesTable;
@@ -33,7 +34,7 @@ public class WebCrawler {
 
     }
 
-    public List<SiteContent> getTitleAndHref() throws IOException {
+    public List<SiteContent> getTitleAndHref() throws IOException,IllegalArgumentException {
 
         Elements titAndHref;
         int iterator = 0;
@@ -46,6 +47,7 @@ public class WebCrawler {
             document = Jsoup.connect(linkers[i]).get();
 
             contentSelectors = selectors.get(i).getContentSelector().split(Pattern.quote("&&"));
+            imgSelectors = selectors.get(i).getImageHref().split(Pattern.quote("&&"));
 
             headAndImgSelectors = new String[2];
             headAndImgSelectors[0] = selectors.get(i).getHeadSelector();
@@ -69,17 +71,18 @@ public class WebCrawler {
             }
 
 
-            for (int j = sizeOfArticlesTable; j < contentOfArticle.size()-1; j++) {
+            for (int j = sizeOfArticlesTable; j < contentOfArticle.size(); j++) {
+
 
                 try {
 
-                    document = Jsoup.connect(contentOfArticle.get(j).getArticle_href()).get();
+                    document = Jsoup.connect(contentOfArticle.get(j).getArticle_href()).timeout(1000).get();
 
-                } catch (IllegalArgumentException ex) {
+                } catch (SocketTimeoutException ex) {
+                    contentOfArticle.get(j).setArticle_content("");
                     break;
                 }
 
-                contentOfArticle.get(j).setArticle_id(j+1);
 
                 String[] separatedTitle = (document.select(selectors.get(i).getTitleSelector()).text().split(Pattern.quote("-")));
 
@@ -103,34 +106,30 @@ public class WebCrawler {
 
                 contentOfArticle.get(j).setArticle_header(document.select(selectors.get(i).getHeadSelector()).text());
 
-
-
-                if ((document.select(selectors.get(i).getImageHref()).attr("src")).length()<1)
+                for(String selector : imgSelectors)
                 {
-                    System.out.println("zero href: "+separatedTitle[0] + (document.select(selectors.get(i).getImageHref()).attr("src")));
-                    absentArticles.add(j);
-                    continue;
+
+                    if ((document.select(selector).attr("abs:src")).length() < 1) {
+                        continue;
+                    } else
+                        contentOfArticle.get(j).setImg_Href(document.select(selector).attr("abs:src"));
                 }
-                else
-                    contentOfArticle.get(j).setImg_Href(document.select(selectors.get(i).getImageHref()).attr("src"));
 
 
             }
-            int baseSize =  contentOfArticle.size();
-            int currentSize;
-            System.out.println("coL"+absentArticles.size());
-/*
-            for(int index : absentArticles)
-            {
-                currentSize = contentOfArticle.size();
-                contentOfArticle.remove(index-(baseSize-currentSize));
-
-            }*/
-
 
 
         }
 
+        for(int i =0; i<contentOfArticle.size();i++)
+        {
+
+            if(contentOfArticle.get(i).getArticle_href().equals(""))
+            {
+                contentOfArticle.remove(i);
+                i=i-1;
+            }
+        }
         return contentOfArticle;
     }
 

@@ -1,10 +1,17 @@
 package com.infosite.db;
 
 
+import com.google.common.base.Charsets;
+import com.google.common.hash.Hashing;
+import com.google.common.io.BaseEncoding;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 
 public class NewAccountDB {
 
@@ -13,11 +20,12 @@ public class NewAccountDB {
 
     public void setAccount(String log, String pass, String email, String[] Resp)
     {
+        String temp = BaseEncoding.base32().encode(pass.getBytes(Charsets.UTF_8));
         conn = ConnectorDB.setConnect();
         try{
             query = conn.prepareStatement("INSERT INTO users VALUE(NULL,?,?,?,?,?,?,?,?)");
             query.setString(1, log);
-            query.setString(2, pass);
+            query.setString(2, temp);
             query.setString(3,email);
             for(int j = 0;j<Resp.length;j++)
             {

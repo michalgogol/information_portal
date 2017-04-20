@@ -1,27 +1,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!doctype html>
 <html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/resources/css/account.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/acc.css">
     <meta charset="utf-8">
-    <title>InfoPortal</title>
-
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Categories</title>
 </head>
 <body>
-
-
-<div class="crossfade">
-    <figure></figure>
-    <figure></figure>
-    <figure></figure>
-    <figure></figure>
-    <figure></figure>
-</div>
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
@@ -34,42 +24,52 @@
     </div>
 </nav>
 
-<div class="container-fluid text-center">
-    <div class="row content">
-        <div class="col-sm-2 sidenav">
-
-        </div>
-        <div class="col-sm-8 text-left">
-
-
-<div class="img1">
-    <section id="sec">
-
-        <div class="test">
-
-            <a href="News" style="text-decoration: none">  <div id="circle1" class="circle" onclick="category('Sport')"><p>Sport</p></div></a>
-            <a href="News" style="text-decoration: none">  <div id="circle2" class="circle" onclick="category('Culture')"><p>Kultura</p></div></a>
-            <a href="News" style="text-decoration: none"><div id="circle3" class="circle" onclick="category('Politic')"><p>Polityka</p></div></a>
-            <a href="News" style="text-decoration: none"><div id="circle4" class="circle" onclick="category('Business')"><p>Biznes</p></div></a>
-            <a href="News" style="text-decoration: none"><div id="circle5" class="circle" onclick="category('Science')"><p>Nauka</p></div></a>
-
-
-        </div>
+<main>
+    <section>
+        <article>
+            <h1>Panel Title</h1>
+        </article>
     </section>
-</div>
-            <div class="col-sm-2 sidenav">
 
-            </div>
-        </div>
-    </div>
-</div>
+    <section id="sport" onclick="category('Sport')">
+        <article onclick="category('Sport')">
+            <h1>Sport</h1>
+        </article>
+    </section>
+    <section id="culture" onclick="category('culture')">
+        <article>
+            <h1>Kultura</h1>
+        </article>
+    </section>
+    <section id="politic" onclick="category('politic')">
+        <article>
+            <h1>Polityka</h1>
+        </article>
+    </section>
+    <section id="business" onclick="category('business')">
+        <article>
+            <h1>Biznes</h1>
+        </article>
+    </section>
+    <section id="science" onclick="category('science')">
+        <article>
+            <h1>Nauka</h1>
+        </article>
+    </section>
+    <section>
+        <article>
+            <h2>Panel Title</h2>
+        </article>
+    </section>
+</main>
+
 
 <script>
-    $('#circle1').hide();
-    $('#circle2').hide();
-    $('#circle3').hide();
-    $('#circle4').hide();
-    $('#circle5').hide();
+    $('#sport').hide();
+    $('#culture').hide();
+    $('#politic').hide();
+    $('#science').hide();
+    $('#business').hide();
 
     function category(cat) {
 
@@ -82,19 +82,44 @@
     var Science = '<c:out value="${Science}"/>';
     var Business = '<c:out value="${Business}"/>';
     if(Sport == "true")
-        $('#circle1').show();
+        $('#sport').show();
 
     if(Culture == "true")
-        $('#circle2').show();
+        $('#culture').show();
 
     if(Politic == "true")
-        $('#circle3').show();
+        $('#politic').show();
 
     if(Business == "true")
-        $('#circle4').show();
+        $('#science').show();
 
     if(Science == "true")
-        $('#circle5').show();
+        $('#business').show();
+</script>
+
+<script>
+    $(document).ready(function() {
+        $("#sport").click(function() {
+            window.location.href="newsloader"
+
+        });
+        $("#culture").click(function() {
+            window.location.href="newsloader"
+
+        });
+        $("#business").click(function() {
+            window.location.href="newsloader"
+
+        });
+        $("#politic").click(function() {
+            window.location.href="newsloader"
+
+        });
+        $("#science").click(function() {
+            window.location.href="newsloader"
+
+        });
+    });
 </script>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>

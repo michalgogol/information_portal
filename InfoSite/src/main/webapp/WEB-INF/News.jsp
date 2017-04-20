@@ -2,70 +2,82 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
-<html>
+
+<!DOCTYPE html>
 <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>News</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/news.css">
+    <link rel="stylesheet" type="text/css" href="/resources/css/normalize.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/ss/demo.css" />
+    <link rel="stylesheet" type="text/css" href="/resources/css/component.css" />
 
-    <title>Title</title>
-
+    <script src="/resources/js/modernizr.custom.js"></script>
 </head>
 <body>
+<div class="container">
 
-<div id="loader"></div>
-
-<nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/index">InfoSite</a>
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/index">InfoSite</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li class="active"><a href="/Account">Home</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <div><a href="/end"><span class="glyphicon glyphicon-log-in"></span> Wyloguj</a></div>
+            </ul>
         </div>
-        <ul class="nav navbar-nav">
-            <li class="active"><a href="/Account">Home</a></li>
+    </nav>
+
+    <section class="grid-wrap">
+        <ul class="grid swipe-right" id="grid">
+            <c:forEach items="${news}" var="theNews">
+
+            <li><a href="#<c:out value='${theNews.article_id}'/>" data-toggle="modal"><img src="${theNews.img_Href}" ><h3> ${theNews.title}</h3></a></li>
+
+
+            </c:forEach>
         </ul>
-        <ul class="nav navbar-nav navbar-right">
-            <li><a href="/end"><span class="glyphicon glyphicon-log-in"></span> Wyloguj</li>
-        </ul>
-    </div>
-</nav>
+    </section>
 
-
-<div class="container-fluid text-center">
-    <div class="row content">
-        <div class="col-sm-2 sidenav">
-
-        </div>
-        <div class="col-sm-8 text-left">
-
-        <c:forEach items="${news}" var="theNews">
-
-    <div class="panel panel-default">
-        <a data-toggle="collapse" data-parent="#accordion" href= "#<c:out value='${theNews.article_id}'/>" >
-        <div class="panel-heading" style="height: 250px; background: url('${theNews.img_Href}'); background-size: cover;background-position: center; ">
-
-
-            <h2 class="panel-title">
-              ${theNews.title}
-            </h2>
-
-        </div></a>
-        <div id=${theNews.article_id} class="panel-collapse collapse">
-            <div class="panel-body">${theNews.article_content}</div>
+    <!-- modal-->
+<c:forEach items="${news}" var="theNews">
+    <div class="modal fade" id=${theNews.article_id} role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">${theNews.title}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>${theNews.article_content}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
-
 </c:forEach>
-        <div class="col-sm-2 sidenav">
-
-        </div>
-    </div>
 </div>
+
+
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/resources/js/masonry.pkgd.min.js"></script>
+<script src="/resources/js/imagesloaded.pkgd.min.js"></script>
+<script src="/resources/js/classie.js"></script>
+<script src="/resources/js/colorfinder-1.1.js"></script>
+<script src="/resources/js/gridScrollFx.js"></script>
 <script>
-    var loader = document.getElementById("loader");
-    window.addEventListener('load',function () {
-        loader.style.display = 'none';
-    })
+    new GridScrollFx( document.getElementById( 'grid' ), {
+        viewportFactor : 0.4
+    } );
 </script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </body>
 </html>

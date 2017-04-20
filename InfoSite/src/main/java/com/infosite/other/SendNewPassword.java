@@ -19,7 +19,7 @@ public class SendNewPassword {
     public void sendMail(String mail,String password)
     {
         properties = new Properties();
-        properties.put("mail.smtp.host","smtp.sample.com");
+        properties.put("mail.smtp.host","smtp.----.com");
         properties.put("mail.smtp.socketFactory.port","465");
         properties.put("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
         properties.put("mail.smtp.auth","true");
@@ -28,7 +28,7 @@ public class SendNewPassword {
         session = Session.getDefaultInstance(properties,new javax.mail.Authenticator(){
 
             protected PasswordAuthentication getPasswordAuthentication(){
-                return new PasswordAuthentication("sample@mail.com","sample");
+                return new PasswordAuthentication("----@-----.com","------");
             }
                 });
 
@@ -36,7 +36,7 @@ public class SendNewPassword {
         try
         {
             message= new SMTPMessage(session);
-            message.setFrom(new InternetAddress("sample@mail.com"));
+            message.setFrom(new InternetAddress("----@-----.com"));
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(mail));
             message.setSubject("Reset Password");
             message.setText("Your new password : "+ password);
