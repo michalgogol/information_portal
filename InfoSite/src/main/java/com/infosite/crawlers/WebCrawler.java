@@ -1,16 +1,18 @@
 package com.infosite.crawlers;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.*;
-import java.util.regex.Pattern;
 
 import com.infosite.db.CategorySelectors;
-import com.infosite.domain.Selector;
-import com.infosite.domain.SiteContent;
+import com.infosite.objects.Selector;
+import com.infosite.objects.SiteContent;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 
@@ -18,10 +20,15 @@ public class WebCrawler {
 
     private Document document;
     private List<SiteContent> contentOfArticle;
-    private String[] linkers,contentSelectors,headAndImgSelectors,imgSelectors;
+    private String[] linkers;
+    private List<String> titleSelectors,imgSelectors,articleHrefSelectors;
     private List<Selector> selectors;
     private List<Integer> absentArticles;
     private int sizeOfArticlesTable;
+
+
+
+    public WebCrawler(){}
 
     public WebCrawler(String category) {
 
@@ -34,103 +41,91 @@ public class WebCrawler {
 
     }
 
+
+
     public List<SiteContent> getTitleAndHref() throws IOException,IllegalArgumentException {
 
-        Elements titAndHref;
-        int iterator = 0;
+        Elements elements;
         contentOfArticle = new ArrayList<SiteContent>();
-        sizeOfArticlesTable=0;
+        sizeOfArticlesTable = 0;
         absentArticles = new ArrayList<Integer>();
 
-        for(int i =0; i< linkers.length; i++) {
+        titleSelectors = new ArrayList<String>();
+        imgSelectors = new ArrayList<String>();
+        articleHrefSelectors = new ArrayList<String>();
+
+        for (int i = 0; i < linkers.length; i++) {
+
 
             document = Jsoup.connect(linkers[i]).get();
 
-            contentSelectors = selectors.get(i).getContentSelector().split(Pattern.quote("&&"));
-            imgSelectors = selectors.get(i).getImageHref().split(Pattern.quote("&&"));
 
-            headAndImgSelectors = new String[2];
-            headAndImgSelectors[0] = selectors.get(i).getHeadSelector();
-            headAndImgSelectors[1] = selectors.get(i).getImageHref();
+            elements = document.select(selectors.get(i).getHeadSelector());
 
-            titAndHref = document.select( selectors.get(i).getArticleHrefSelector());
-
-
-            for (int j = 0; j < (titAndHref.size()) / 2; j++) {
-
-                if ( titAndHref.get(j).attr("abs:href").equals("")) {
-
-                    continue;
-                }
-                else {
-                    contentOfArticle.add(new SiteContent());
-                    contentOfArticle.get(iterator).setArticle_href(titAndHref.get(j).attr("abs:href"));
-                    iterator++;
-                }
-
-            }
-
-
-            for (int j = sizeOfArticlesTable; j < contentOfArticle.size(); j++) {
-
-
-                try {
-
-                    document = Jsoup.connect(contentOfArticle.get(j).getArticle_href()).timeout(1000).get();
-
-                } catch (SocketTimeoutException ex) {
-                    contentOfArticle.get(j).setArticle_content("");
-                    break;
-                }
-
-
-                String[] separatedTitle = (document.select(selectors.get(i).getTitleSelector()).text().split(Pattern.quote("-")));
-
-                if(separatedTitle[0].equals(""))
-                {
-                    absentArticles.add(j);
-                    continue;
-                }
-                else
-                    contentOfArticle.get(j).setTitle(separatedTitle[0]);
-
-
-                for(String selector : contentSelectors)
-                {
-                    if (document.select(selector).text().length() > 0)
-                        contentOfArticle.get(j).setArticle_content(document.select(selector).text());
-                    else
-                        continue;
-                }
-
-
-                contentOfArticle.get(j).setArticle_header(document.select(selectors.get(i).getHeadSelector()).text());
-
-                for(String selector : imgSelectors)
-                {
-
-                    if ((document.select(selector).attr("abs:src")).length() < 1) {
-                        continue;
-                    } else
-                        contentOfArticle.get(j).setImg_Href(document.select(selector).attr("abs:src"));
-                }
-
-
-            }
-
-
-        }
-
-        for(int i =0; i<contentOfArticle.size();i++)
-        {
-
-            if(contentOfArticle.get(i).getArticle_href().equals(""))
+            for(Element e : elements)
             {
-                contentOfArticle.remove(i);
-                i=i-1;
+                if(e.select(selectors.get(i).getTitleSelector()).isEmpty() || e.select(selectors.get(i).getArticleHrefSelector()).attr("abs:href").isEmpty()
+                        || e.select(selectors.get(i).getImageHref()).attr("abs:src").isEmpty())
+                    continue;
+
+                titleSelectors.add(e.select(selectors.get(i).getTitleSelector()).text());
+
+                imgSelectors.add(e.select(selectors.get(i).getImageHref()).attr("src"));
+
+                articleHrefSelectors.add(URLEncoder.encode(e.select(selectors.get(i).getArticleHrefSelector()).attr("abs:href"),"UTF-8"));
+
             }
+            for (int j = 0; j < titleSelectors.size(); j++)
+                contentOfArticle.add(new SiteContent(j,titleSelectors.get(j), imgSelectors.get(j), articleHrefSelectors.get(j)));
+
         }
         return contentOfArticle;
+    }
+
+
+
+
+
+    public String getArticleContent(String encodedUrl) throws IOException  {
+
+        String decodedUrl,conSelector;
+        try {
+            decodedUrl = URLDecoder.decode(encodedUrl, "UTF-8");
+        }catch (UnsupportedEncodingException ex){return "";}
+
+
+        char[] decodedUrlToChar = decodedUrl.toCharArray();
+        String coreDomain ="";
+        for(int i = 1; i<decodedUrlToChar.length;i++)
+        {
+            if(decodedUrlToChar[i-1] == 'p' && decodedUrlToChar[i]=='l')
+            {
+                coreDomain= String.valueOf(decodedUrlToChar,0,i+2);
+            }
+        }
+        char[] coreDomainToChar =coreDomain.toCharArray();
+        for(int i = coreDomain.length()-5; i> 0; i--)
+        {
+
+
+            if (coreDomainToChar[i] == '.') {
+                coreDomain = "http://www" + String.valueOf(coreDomainToChar, i, coreDomain.length()-i);
+                System.out.println(coreDomain);
+                break;
+            }
+
+        }
+
+        conSelector = new CategorySelectors().getContentSelector(coreDomain);
+
+        document = Jsoup.connect(decodedUrl).get();
+        try
+        {
+            return document.select(conSelector).text();
+         }catch(IllegalArgumentException ex){return "none";}
+
+
+
     }
 
 

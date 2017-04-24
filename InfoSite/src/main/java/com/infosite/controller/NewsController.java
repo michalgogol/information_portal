@@ -3,11 +3,12 @@ package com.infosite.controller;
 
 import com.infosite.crawlers.WebCrawler;
 
-import com.infosite.domain.SiteContent;
+import com.infosite.objects.SiteContent;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,18 +31,34 @@ public class NewsController {
         crawler = new WebCrawler(categoryValue);
         ModelAndView modeler = new ModelAndView();
 
-        long timer = System.currentTimeMillis();
-
         try {
             info = crawler.getTitleAndHref();
         }catch (IOException ex){ex.printStackTrace();}
 
-        timer = System.currentTimeMillis() - timer;
-        System.out.println(timer);
 
         modeler.addObject("news",info);
         return modeler;
 
     }
+
+
+
+
+
+    @RequestMapping(value="/newcontent", method = RequestMethod.GET)
+    public ModelAndView sendContentOfArticle(HttpServletRequest request)
+    {
+        ModelAndView container = new ModelAndView();
+        try {
+
+        crawler = new WebCrawler();
+        container.addObject("content",crawler.getArticleContent(request.getParameter("url")));
+
+        }catch (IOException ex){ex.printStackTrace();}
+        finally {
+            return container;
+        }
+    }
+
 
 }

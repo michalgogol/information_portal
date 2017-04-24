@@ -1,7 +1,7 @@
 package com.infosite.db;
 
 
-import com.infosite.domain.Selector;
+import com.infosite.objects.Selector;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,6 +36,23 @@ public class CategorySelectors {
             return links;
         }
     }
+    public String getContentSelector(String url)
+    {
+        conn = ConnectorDB.setConnect();
+        String selector ="";
+        try
+        {
+            query = conn.prepareStatement("SELECT Article_Content FROM selectors WHERE Adress =?");
+            query.setString(1,url);
+            ResultSet res = query.executeQuery();
+            while (res.next())
+                selector = res.getString("Article_Content");
+
+        }catch (SQLException ex){return selector;}
+
+        return selector;
+    }
+
 
     public void addNewsSelectors(String category,String domain, String title,String art_href, String art_cont,String art_head,String img_href)
     {

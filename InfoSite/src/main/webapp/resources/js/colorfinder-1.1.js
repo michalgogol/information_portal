@@ -45,7 +45,7 @@ function ColorFinder(colorFactorCallback) {
     try {
       data = context.getImageData(0, 0, width, height);
     } catch(e) {
-      /* security error, img on diff domain */
+      /* security error, img on diff objects */
       return null;
     }
 

@@ -46,27 +46,34 @@
     </section>
 
     <!-- modal-->
-<c:forEach items="${news}" var="theNews">
-    <div class="modal fade" id=${theNews.article_id} role="dialog">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">${theNews.title}</h4>
-                </div>
-                <div class="modal-body">
-                    <p>${theNews.article_content}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <c:forEach items="${news}" var="theNews">
+        <div class="modal fade" id=${theNews.article_id} role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">${theNews.title}</h4>
+                    </div>
+                    <div class="modal-body" style="display: block">
+                        <iframe id="<c:out value='${theNews.title}'/>" src="/newcontent?url=<c:out value='${theNews.article_href}'/>" height="500" width="700"  ></iframe>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</c:forEach>
+    </c:forEach>
 </div>
 
 
 </div>
+
+<script>
+
+
+
+</script>
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script src="/resources/js/masonry.pkgd.min.js"></script>
