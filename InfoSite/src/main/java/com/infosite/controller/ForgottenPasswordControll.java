@@ -1,10 +1,8 @@
 package com.infosite.controller;
 
 
-import com.google.common.base.Charsets;
-import com.google.common.io.BaseEncoding;
 import com.infosite.db.ResetPasswordDB;
-import com.infosite.objects.UserID;
+import com.infosite.domain.UserID;
 import com.infosite.other.SendNewPassword;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -29,13 +27,13 @@ public class ForgottenPasswordControll {
         password = new SendNewPassword();
         reset = new ResetPasswordDB();
 
+        System.out.print(user.getEmail());
+
         if(reset.checkEmail(user.getEmail())!=0) {
 
-            String newPass = password.passwordGenerator();
-            password.sendMail(user.getEmail(),newPass);
-            newPass = BaseEncoding.base32().encode(newPass.getBytes(Charsets.UTF_8));
-            reset.setNewPassword( newPass,user.getEmail());
-
+            String tempPass = password.passwordGenerator();
+            reset.setNewPassword( tempPass,user.getEmail());
+            password.sendMail(user.getEmail(),tempPass);
 
         }
         return new ModelAndView("redirect:/index");

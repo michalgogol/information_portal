@@ -8,10 +8,6 @@
             padding-bottom: 15%;
         }
 
-	input[type="text"] {
-	    width: 200px;
-	}
-
 
         .btn-link, #forgotten{
             color:white;
@@ -77,10 +73,4 @@
             background-color: red;
             height: 350px;
         }
-
-
-	
-	.carousel-inner > .item > img{
-      margin: 0 auto;
-  }
 

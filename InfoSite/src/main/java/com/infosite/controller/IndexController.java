@@ -3,17 +3,18 @@ package com.infosite.controller;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 
 
 @Controller
 public class IndexController {
 
+    @RequestMapping("/")
+    public ModelAndView goToIndex(){
+        return new ModelAndView("redirect:/index");
+    }
 
     @RequestMapping("/index")
     public void showIndex(){}
@@ -26,9 +27,10 @@ public class IndexController {
     }
 
     @RequestMapping("/end")
-    public ModelAndView endSession(HttpServletResponse response){
+    public ModelAndView endSession(){
 
-        response.addCookie(new Cookie("userid",""));
+        Cookie cookie = new Cookie("login","");
+        cookie.setMaxAge(0);
         return new ModelAndView("redirect:/index");
     }
 

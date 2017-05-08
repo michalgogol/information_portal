@@ -61,7 +61,7 @@
 
 
                 Title:<br>
-                <input type="text" name="title"><input type="checkbox" name="attr" value="title"> attr: title <input type="checkbox" name="attr" value="alt"> attr: alt<br>
+                <input type="text" name="title"><br>
 
 
                 Article Href:<br>

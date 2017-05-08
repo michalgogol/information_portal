@@ -3,10 +3,8 @@
 <%@ page isELIgnored="false"%>
 <!doctype html>
 <head>
-    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/resources/css/index.css">
-
-
     <meta charset="utf-8">
     <title>InfoSite</title>
 </head>
@@ -27,13 +25,12 @@
 
 <div class="loginpart">
 
-
     <div class="container-fluid">
 
 
 
 
-                <form action="userDB" method="POST">
+                <form action="userDAO" method="POST">
                     <div class="container">
                    <div class="form-group">
                        <label  class="whiteLabel" for="login">Login: </label>
@@ -160,40 +157,35 @@
     <h2>Nasze sprawdzone źródła informacji</h2>
 
     <br>
-    <div id="myCarousel" class="carousel slide" data-ride="carousel" style="max-width: 900px; margin: 0 auto">
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
             <li data-target="#myCarousel" data-slide-to="1"></li>
             <li data-target="#myCarousel" data-slide-to="2"></li>
             <li data-target="#myCarousel" data-slide-to="3"></li>
-            <li data-target="#myCarousel" data-slide-to="4"></li>
         </ol>
 
         <!-- Wrapper for slides -->
         <div class="carousel-inner" role="listbox">
 
-            <div class="item active " >
-                <img src="/resources/images/wpolityce.jpg"  >
+            <div class="item active" style="width: 400px; ">
+                <img src="http://www.nationalgeographic.com/content/dam/magazine/Logos/national-geographic.jpg"  >
 
             </div>
 
-            <div class="item" >
-                <img src="/resources/images/money.jpg"   >
-
-            </div>
-            <div class="item" >
-                <img src="/resources/images/forbes.jpg"   >
+            <div class="item" style="width: 400px;">
+                <img src="http://aplikacja.sport.pl/images/sport-ikona-fb.png"   >
 
             </div>
 
-            <div class="item" >
-                <img src="/resources/images/o.jpg" >
+            <div class="item" style="width: 400px; ">
+                <img src="http://www.nationalgeographic.com/content/dam/magazine/Logos/national-geographic.jpg" >
 
             </div>
 
-            <div class="item" >
-                <img id="test" src="/resources/images/gw.jpg"  >
+            <div class="item" style="width: 400px;">
+                <img id="test" src="http://aplikacja.sport.pl/images/sport-ikona-fb.png"  >
 
             </div>
 
@@ -209,12 +201,12 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-
-
 </div>
 
+
+
 <script src="//ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
-<script src="/resources/js/bootstrap.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function(){
         // Add smooth scrolling to all links in navbar + footer link
@@ -226,7 +218,7 @@
 
                 $('html, body').animate({
                     scrollTop: $(hash).offset().top
-                }, 700, function(){
+                }, 900, function(){
 
                     window.location.hash = hash;
                 });
@@ -238,7 +230,7 @@
                 var pos = $(this).offset().top;
 
                 var winTop = $(window).scrollTop();
-                if (pos < winTop + 700) {
+                if (pos < winTop + 900) {
                     $(this).addClass("slide");
                 }
             });

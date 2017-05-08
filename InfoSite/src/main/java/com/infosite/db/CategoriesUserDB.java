@@ -2,13 +2,10 @@ package com.infosite.db;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.sql.*;
-import java.text.CollationKey;
 
 @Controller
 public class CategoriesUserDB {
@@ -20,31 +17,25 @@ public class CategoriesUserDB {
 
 
     @RequestMapping("/Account")
-    public ModelAndView userAccount(@CookieValue("userid") String uuid, Model model, HttpServletRequest request){
+    public void userAccount(@ModelAttribute("login") String login,Model model){
 
+        session = accountSpecification(login);
 
-        if(uuid.equals("") || uuid == null)
-            return new ModelAndView("redirect: /index");
-
-        session = accountSpecification(uuid);
         model.addAttribute("Sport",session[0]);
         model.addAttribute("Culture",session[1]);
         model.addAttribute("Politic",session[2]);
         model.addAttribute("Business",session[3]);
         model.addAttribute("Science",session[4]);
 
-        return new ModelAndView();
-
     }
-
-
+    @SuppressWarnings("finally")
     public Boolean[] accountSpecification(String login)
     {
         Boolean[] attributes = new Boolean[5];
         conn = ConnectorDB.setConnect();
         try{
             query = conn.prepareStatement("SELECT Sport, Culture, Politic, Business, Science FROM users"
-                    + " WHERE uuid= ? ");
+                    + " WHERE Login= ? ");
             query.setString(1, login);
             ResultSet res = query.executeQuery();
 
@@ -66,7 +57,6 @@ public class CategoriesUserDB {
 
 
     }
-
 
 
 }
